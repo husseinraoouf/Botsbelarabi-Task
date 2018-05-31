@@ -15,13 +15,13 @@ const
   mesClient = messenger(process.env.FB_PAGE_ACCESS_TOKEN),
   darksky = require('./lib/darksky'),
   weatherClient = darksky(process.env.DARKSKY_KEY),
-  // connectDB = require('./lib/users'),
+  connectDB = require('./lib/users'),
   moment = require('moment');
 
 
 const start = async () => {
 
-  // const Users = await connectDB(process.env.MONGODB_URI);
+  const Users = await connectDB(process.env.MONGODB_URI);
   
   app.use(bodyParser.json());
   app.use('/static', express.static('static'));
