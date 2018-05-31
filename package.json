@@ -1,0 +1,17 @@
+{
+  "name": "Botsbelarabi-Task",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:husseinraoouf/Botsbelarabi-Task.git",
+  "author": "El-Hussein Abdelraouf <husseinraoouf@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "dialogflow": "^0.5.0",
+    "express": "^4.16.3",
+    "moment": "^2.22.1",
+    "mongodb": "^3.1.0-beta4",
+    "request": "^2.87.0",
+    "request-promise-native": "^1.0.5"
+  }
+}
