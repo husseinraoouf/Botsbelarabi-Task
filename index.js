@@ -188,7 +188,7 @@ const start = async () => {
             for (let i = 0; i < numOfDays; i++) {
               response.attachment.payload.elements.push({
                 "title": `${moment.unix(weatherData[i].time).format('dddd')} Max: ${weatherData[i].max} Min: ${weatherData[i].min}`,
-                "image_url": `https://4e65405a.ngrok.io/static/icons/${weatherData[i].icon}.png`,
+                "image_url": `https://botsbelaraby-task.herokuapp.com/static/icons/${weatherData[i].icon}.png`,
                 "subtitle": `${weatherData[i].subtitle}
   Data For the Day ${moment.unix(weatherData[i].time).format('dddd DD-MM-YYYY')}`,
               })
@@ -256,14 +256,14 @@ const start = async () => {
             if (withTime) {
               response.attachment.payload.elements.push({
                 "title": `${moment.unix(weatherData.time).format('dddd')} Temperature: ${weatherData.temperature} Humidity: ${weatherData.humidity}`,
-                "image_url": `https://4e65405a.ngrok.io/static/icons/${weatherData.icon}.png`,
+                "image_url": `https://botsbelaraby-task.herokuapp.com/static/icons/${weatherData.icon}.png`,
                 "subtitle": `${weatherData.subtitle}
   Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')} at ${moment.unix(weatherData.time).format('hh a')}`,
               })
             } else {
               response.attachment.payload.elements.push({
                 "title": `${moment.unix(weatherData.time).format('dddd')} Max: ${weatherData.max} Min: ${weatherData.min}`,
-                "image_url": `https://4e65405a.ngrok.io/static/icons/${weatherData.icon}.png`,
+                "image_url": `https://botsbelaraby-task.herokuapp.com/static/icons/${weatherData.icon}.png`,
                 "subtitle": `${weatherData.subtitle}
   Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')}`,
               })
