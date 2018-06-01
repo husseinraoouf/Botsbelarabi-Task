@@ -556,7 +556,7 @@ const start = async () => {
       await mesClient.callSendMessageAPI(sender_psid, response);
     } else if (payload.action == 'setLocation') {
 
-      location = JSON.parse(payload.location);
+      const location = JSON.parse(payload.location);
       await Users.setLocation(sender_psid, location);
 
       console.log(location);
@@ -590,7 +590,7 @@ Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')}`,
 
     } else if (payload.action == 'checkWeather') {
 
-      location = JSON.parse(payload.location);
+      const location = JSON.parse(payload.location);
 
       const user = await Users.getUser(sender_psid);
 
@@ -619,7 +619,7 @@ Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')}`,
 
     } else if (payload.action == 'checkForecast') {
 
-      location = JSON.parse(payload.location);
+      const location = JSON.parse(payload.location);
 
       const numOfDays = 7;
   
