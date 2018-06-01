@@ -630,10 +630,10 @@ Data For the Day ${moment.unix(weatherData.time).add( user.timezone, 'hours').fo
 
 
       response.attachment.payload.elements.push({
-        "title": `${moment.unix(weatherData.time).add( user.timezone, 'hours').format('dddd')} Max: ${weatherData.max} Min: ${weatherData.min}`,
+        "title": `${moment.unix(weatherData.time).add( user.timezone, 'hours').format('dddd')} Temperature: ${weatherData.temperature} Humidity: ${weatherData.humidity}`,
         "image_url": `https://botsbelaraby-task.herokuapp.com/static/icons/${weatherData.icon}.png`,
         "subtitle": `${weatherData.subtitle}
-Data For the Day ${moment.unix(weatherData.time).add( user.timezone, 'hours').format('dddd DD-MM-YYYY')}`,
+Data For the Day ${moment.unix(weatherData.time).add( user.timezone, 'hours').format('dddd DD-MM-YYYY')} at ${moment.unix(weatherData.time).add( user.timezone, 'hours').format('hh a')}`,
       })
 
       await mesClient.callSendMessageAPI(sender_psid, response);
