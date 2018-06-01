@@ -310,10 +310,10 @@ const start = async () => {
                       "title": "Set As My Location",
                       "payload": JSON.stringify({
                         "action": 'setLocation',
-                        "location": {
+                        "location": JSON.stringify({
                           "lat": lat,
                           "long": long
-                        }
+                        })
                       }) 
                     },
                     {
@@ -321,10 +321,21 @@ const start = async () => {
                       "title": "Check The Weather",
                       "payload": JSON.stringify({
                         "action": 'checkWeather',
-                        "location": {
+                        "location": JSON.stringify({
                           "lat": lat,
                           "long": long
-                        }
+                        })
+                      })
+                    },
+                    {
+                      "type": "postback",
+                      "title": "Check The Forecast",
+                      "payload": JSON.stringify({
+                        "action": 'checkForecast',
+                        "location": JSON.stringify({
+                          "lat": lat,
+                          "long": long
+                        })
                       })
                     }
                   ]
@@ -468,10 +479,10 @@ const start = async () => {
                   "title": "Set As My Location",
                   "payload": JSON.stringify({
                     "action": 'setLocation',
-                    "location": {
+                    "location": JSON.stringify({
                       "lat": lat,
                       "long": long
-                    }
+                    })
                   }) 
                 },
                 {
@@ -479,10 +490,10 @@ const start = async () => {
                   "title": "Check The Weather",
                   "payload": JSON.stringify({
                     "action": 'checkWeather',
-                    "location": {
+                    "location": JSON.stringify({
                       "lat": lat,
                       "long": long
-                    }
+                    })
                   })
                 },
                 {
@@ -490,10 +501,10 @@ const start = async () => {
                   "title": "Check The Forecast",
                   "payload": JSON.stringify({
                     "action": 'checkForecast',
-                    "location": {
+                    "location": JSON.stringify({
                       "lat": lat,
                       "long": long
-                    }
+                    })
                   })
                 }
               ]
@@ -544,15 +555,17 @@ const start = async () => {
   
       await mesClient.callSendMessageAPI(sender_psid, response);
     } else if (payload.action == 'setLocation') {
-      await Users.setLocation(sender_psid, payload.location);
 
-      console.log(payload.location);
+      location = JSON.parse(payload.location);
+      await Users.setLocation(sender_psid, location);
+
+      console.log(location);
       
 
       await mesClient.sendText(sender_psid, "I Have Set Yor Location");
 
 
-      const weatherData = await weatherClient.getWeatherInTime(payload.location.lat, payload.location.long, moment().unix(), true);
+      const weatherData = await weatherClient.getWeatherInTime(location.lat, location.long, moment().unix(), true);
     
   
       let response = {
@@ -577,9 +590,11 @@ Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')}`,
 
     } else if (payload.action == 'checkWeather') {
 
+      location = JSON.parse(payload.location);
+
       const user = await Users.getUser(sender_psid);
 
-      const weatherData = await weatherClient.getWeatherInTime(payload.location.lat, payload.location.long, moment().unix(), true, user.unit);
+      const weatherData = await weatherClient.getWeatherInTime(location.lat, location.long, moment().unix(), true, user.unit);
     
   
       let response = {
@@ -604,11 +619,13 @@ Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')}`,
 
     } else if (payload.action == 'checkForecast') {
 
+      location = JSON.parse(payload.location);
+
       const numOfDays = 7;
   
       const user = await Users.getUser(sender_psid);
 
-      const weatherData = await weatherClient.getForcast(payload.location.lat, payload.location.long, numOfDays, user.unit);
+      const weatherData = await weatherClient.getForcast(location.lat, location.long, numOfDays, user.unit);
 
       console.log(weatherData);
 
