@@ -165,6 +165,9 @@ const start = async () => {
           if (result.action && result.action == 'getForcast') {
             let lat, long, numOfDays;
   
+            const user = await Users.getUser(sender_psid);
+
+            
             if (params.lat && params.long) {
               lat = params.lat;
               long = params.long;
@@ -188,8 +191,6 @@ const start = async () => {
   
   
             numOfDays = params.numOfDays;
-  
-            const user = await Users.getUser(sender_psid);
 
             const weatherData = await weatherClient.getForcast(lat, long, numOfDays, user.unit);
   
@@ -220,6 +221,8 @@ Data For the Day ${moment.unix(weatherData[i].time).format('dddd DD-MM-YYYY')}`,
           } else if (result.action && result.action == 'getWeatherInTime') {
             let lat, long, time, withTime = false;
   
+            const user = await Users.getUser(sender_psid);
+
             if (params.lat && params.long) {
               lat = params.lat;
               long = params.long;
@@ -255,8 +258,6 @@ Data For the Day ${moment.unix(weatherData[i].time).format('dddd DD-MM-YYYY')}`,
               time = moment().unix();
             }
   
-            
-            const user = await Users.getUser(sender_psid);
 
             console.log(withTime);
             const weatherData = await weatherClient.getWeatherInTime(lat, long, time, withTime, user.unit);
