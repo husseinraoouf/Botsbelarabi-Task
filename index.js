@@ -546,6 +546,9 @@ const start = async () => {
     } else if (payload.action == 'setLocation') {
       await Users.setLocation(sender_psid, payload.location);
 
+      console.log(payload.location);
+      
+
       await mesClient.sendText(sender_psid, "I Have Set Yor Location");
 
 
