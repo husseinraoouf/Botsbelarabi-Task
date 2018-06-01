@@ -112,7 +112,7 @@ const start = async () => {
               "title":"Celsius",
               "payload": JSON.stringify({
                 "action": "setUnit",
-                "unit": "us",
+                "unit": "ca",
               })
             },
             {
