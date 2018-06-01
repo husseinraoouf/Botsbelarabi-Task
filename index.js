@@ -291,7 +291,34 @@ const start = async () => {
     } else if (received_message.attachments) {
   
       if (received_message.attachments[0].type == "location") {
-        await mesClient.sendText(sender_psid, `Weather (Time) For Location lat: ${received_message.attachments[0].payload.coordinates.lat} long: ${received_message.attachments[0].payload.coordinates.long} and Time: ${moment().unix()} for all Day`);
+        const lat = received_message.attachments[0].payload.coordinates.lat;
+        const long = received_message.attachments[0].payload.coordinates.lng;
+        const time = moment().unix();
+
+
+        const weatherData = await weatherClient.getWeatherInTime(lat, long, time, false);
+    
+  
+        let response = {
+          "attachment": {
+            "type": "template",
+            "payload": {
+              "template_type": "generic",
+              "elements": []
+            }
+          }
+        }
+
+
+        response.attachment.payload.elements.push({
+          "title": `${moment.unix(weatherData.time).format('dddd')} Max: ${weatherData.max} Min: ${weatherData.min}`,
+          "image_url": `https://botsbelaraby-task.herokuapp.com/static/icons/${weatherData.icon}.png`,
+          "subtitle": `${weatherData.subtitle}
+Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')}`,
+        })
+
+        await mesClient.callSendMessageAPI(sender_psid, response);
+        // await mesClient.sendText(sender_psid, `Weather (Time) For Location lat: ${received_message.attachments[0].payload.coordinates.lat} long: ${received_message.attachments[0].payload.coordinates.long} and Time: ${moment().unix()} for all Day`);
       } else {
         // Gets the URL of the message attachment
         let attachment_url = received_message.attachments[0].payload.url;
