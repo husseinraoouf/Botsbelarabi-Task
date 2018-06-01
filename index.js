@@ -464,7 +464,7 @@ const start = async () => {
   
       if (received_message.attachments[0].type == "location") {
         const lat = received_message.attachments[0].payload.coordinates.lat;
-        const long = received_message.attachments[0].payload.coordinates.lng;
+        const long = received_message.attachments[0].payload.coordinates.long;
 
         console.log(`qqqqqqqqqqqqqqqqqqqqqqq: ${lat}    ${long}`);
         
