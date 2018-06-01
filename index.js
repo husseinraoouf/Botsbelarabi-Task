@@ -558,15 +558,17 @@ const start = async () => {
     } else if (payload.action == 'setLocation') {
 
       const location = JSON.parse(payload.location);
+      
       await Users.setLocation(sender_psid, location);
 
-      console.log(location);
-      
+      const user = await Users.getUser(sender_psid);
+
 
       await mesClient.sendText(sender_psid, "I Have Set Yor Location");
 
+      const time = moment().unix();
 
-      const weatherData = await weatherClient.getWeatherInTime(location.lat, location.long, moment().unix(), true);
+      const weatherData = await weatherClient.getWeatherInTime(location.lat, location.long, time, true, user.unit);
     
   
       let response = {
