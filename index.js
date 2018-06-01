@@ -1,7 +1,7 @@
 'use strict';
 
 const path = require('path');
-process.env['GOOGLE_APPLICATION_CREDENTIALS'] = path.join(`${__dirname}/Botsbelarabi-Task-d38fc640e5a8.json`);
+process.env['GOOGLE_APPLICATION_CREDENTIALS'] = path.join(`${__dirname}/Botsbelarabi-Task-b4c7a8504300.json`);
 
 // Imports dependencies and set up http server
 const
