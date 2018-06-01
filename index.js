@@ -133,8 +133,6 @@ const start = async () => {
         await mesClient.sendText(sender_psid, "I Have Set Your Unit");
       }
 
-      await mesClient.sendText(sender_psid, `ma3lesh`);
-
     } else if (received_message.text) {
       // Define session path
       const sessionPath = sessionClient.sessionPath(process.env.projectId, sender_psid);
@@ -249,10 +247,10 @@ Data For the Day ${moment.unix(weatherData[i].time).format('dddd DD-MM-YYYY')}`,
               withTime = true;
               let temp = params.date.substr(0, params.date.indexOf('T')) + 'T' + params.time.substr(params.time.indexOf('T') + 1);
   
-              time = moment(temp).unix();
+              time = moment(temp).subtract( user.timezone, 'hours').unix();
   
             } else if (params.date) {
-              time = moment(params.date).unix();
+              time = moment(params.date).subtract( user.timezone, 'hours').unix();
             } else {
               time = moment().unix();
             }
@@ -279,17 +277,17 @@ Data For the Day ${moment.unix(weatherData[i].time).format('dddd DD-MM-YYYY')}`,
   
             if (withTime) {
               response.attachment.payload.elements.push({
-                "title": `${moment.unix(weatherData.time).format('dddd')} Temperature: ${weatherData.temperature} Humidity: ${weatherData.humidity}`,
+                "title": `${moment.unix(weatherData.time).add( user.timezone, 'hours').format('dddd')} Temperature: ${weatherData.temperature} Humidity: ${weatherData.humidity}`,
                 "image_url": `https://botsbelaraby-task.herokuapp.com/static/icons/${weatherData.icon}.png`,
                 "subtitle": `${weatherData.subtitle}
-Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')} at ${moment.unix(weatherData.time).format('hh a')}`,
+Data For the Day ${moment.unix(weatherData.time).add( user.timezone, 'hours').format('dddd DD-MM-YYYY')} at ${moment.unix(weatherData.time).add( user.timezone, 'hours').format('hh a')}`,
               })
             } else {
               response.attachment.payload.elements.push({
-                "title": `${moment.unix(weatherData.time).format('dddd')} Max: ${weatherData.max} Min: ${weatherData.min}`,
+                "title": `${moment.unix(weatherData.time).add( user.timezone, 'hours').format('dddd')} Max: ${weatherData.max} Min: ${weatherData.min}`,
                 "image_url": `https://botsbelaraby-task.herokuapp.com/static/icons/${weatherData.icon}.png`,
                 "subtitle": `${weatherData.subtitle}
-Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')}`,
+Data For the Day ${moment.unix(weatherData.time).add( user.timezone, 'hours').format('dddd DD-MM-YYYY')}`,
               })
             }
   
@@ -378,10 +376,10 @@ Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')}`,
                 withTime = true;
                 let temp = params.date.substr(0, params.date.indexOf('T')) + 'T' + params.time.substr(params.time.indexOf('T') + 1);
     
-                time = moment(temp).unix();
+                time = moment(temp).subtract( user.timezone, 'hours').unix();
     
               } else if (params.date) {
-                time = moment(params.date).unix();
+                time = moment(params.date).subtract( user.timezone, 'hours').unix();
               } else {
                 time = moment().unix();
               }
@@ -407,17 +405,17 @@ Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')}`,
     
               if (withTime) {
                 response.attachment.payload.elements.push({
-                  "title": `${moment.unix(weatherData.time).format('dddd')} Temperature: ${weatherData.temperature} Humidity: ${weatherData.humidity}`,
+                  "title": `${moment.unix(weatherData.time).add( user.timezone, 'hours').format('dddd')} Temperature: ${weatherData.temperature} Humidity: ${weatherData.humidity}`,
                   "image_url": `https://botsbelaraby-task.herokuapp.com/static/icons/${weatherData.icon}.png`,
                   "subtitle": `${weatherData.subtitle}
-Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')} at ${moment.unix(weatherData.time).format('hh a')}`,
+Data For the Day ${moment.unix(weatherData.time).add( user.timezone, 'hours').format('dddd DD-MM-YYYY')} at ${moment.unix(weatherData.time).add( user.timezone, 'hours').format('hh a')}`,
                 })
               } else {
                 response.attachment.payload.elements.push({
-                  "title": `${moment.unix(weatherData.time).format('dddd')} Max: ${weatherData.max} Min: ${weatherData.min}`,
+                  "title": `${moment.unix(weatherData.time).add( user.timezone, 'hours').format('dddd')} Max: ${weatherData.max} Min: ${weatherData.min}`,
                   "image_url": `https://botsbelaraby-task.herokuapp.com/static/icons/${weatherData.icon}.png`,
                   "subtitle": `${weatherData.subtitle}
-Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')}`,
+Data For the Day ${moment.unix(weatherData.time).add( user.timezone, 'hours').format('dddd DD-MM-YYYY')}`,
                 })
               }
     
@@ -453,10 +451,10 @@ Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')}`,
     
               for (let i = 0; i < numOfDays; i++) {
                 response.attachment.payload.elements.push({
-                  "title": `${moment.unix(weatherData[i].time).format('dddd')} Max: ${weatherData[i].max} Min: ${weatherData[i].min}`,
+                  "title": `${moment.unix(weatherData[i].time).add( user.timezone, 'hours').format('dddd')} Max: ${weatherData[i].max} Min: ${weatherData[i].min}`,
                   "image_url": `https://botsbelaraby-task.herokuapp.com/static/icons/${weatherData[i].icon}.png`,
                   "subtitle": `${weatherData[i].subtitle}
-Data For the Day ${moment.unix(weatherData[i].time).format('dddd DD-MM-YYYY')}`,
+Data For the Day ${moment.unix(weatherData[i].time).add( user.timezone, 'hours').format('dddd DD-MM-YYYY')}`,
                 })
               }
     
@@ -572,7 +570,7 @@ Data For the Day ${moment.unix(weatherData[i].time).format('dddd DD-MM-YYYY')}`,
         }]
       }
 
-      await Users.createUser(sender_psid);
+      await Users.createUser(sender_psid, user.timezone);
   
       await mesClient.callSendMessageAPI(sender_psid, response);
     } else if (payload.action == 'setLocation') {
@@ -603,10 +601,10 @@ Data For the Day ${moment.unix(weatherData[i].time).format('dddd DD-MM-YYYY')}`,
 
 
       response.attachment.payload.elements.push({
-        "title": `${moment.unix(weatherData.time).format('dddd')} Temperature: ${weatherData.temperature} Humidity: ${weatherData.humidity}`,
+        "title": `${moment.unix(weatherData.time).add( user.timezone, 'hours').format('dddd')} Temperature: ${weatherData.temperature} Humidity: ${weatherData.humidity}`,
         "image_url": `https://botsbelaraby-task.herokuapp.com/static/icons/${weatherData.icon}.png`,
         "subtitle": `${weatherData.subtitle}
-Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')} at ${moment.unix(weatherData.time).format('hh a')}`,
+Data For the Day ${moment.unix(weatherData.time).add( user.timezone, 'hours').format('dddd DD-MM-YYYY')} at ${moment.unix(weatherData.time).add( user.timezone, 'hours').format('hh a')}`,
       })
 
       await mesClient.callSendMessageAPI(sender_psid, response);
@@ -632,10 +630,10 @@ Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')} at $
 
 
       response.attachment.payload.elements.push({
-        "title": `${moment.unix(weatherData.time).format('dddd')} Max: ${weatherData.max} Min: ${weatherData.min}`,
+        "title": `${moment.unix(weatherData.time).add( user.timezone, 'hours').format('dddd')} Max: ${weatherData.max} Min: ${weatherData.min}`,
         "image_url": `https://botsbelaraby-task.herokuapp.com/static/icons/${weatherData.icon}.png`,
         "subtitle": `${weatherData.subtitle}
-Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')}`,
+Data For the Day ${moment.unix(weatherData.time).add( user.timezone, 'hours').format('dddd DD-MM-YYYY')}`,
       })
 
       await mesClient.callSendMessageAPI(sender_psid, response);
@@ -665,16 +663,16 @@ Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')}`,
 
       for (let i = 0; i < numOfDays; i++) {
         response.attachment.payload.elements.push({
-          "title": `${moment.unix(weatherData[i].time).format('dddd')} Max: ${weatherData[i].max} Min: ${weatherData[i].min}`,
+          "title": `${moment.unix(weatherData[i].time).add( user.timezone, 'hours').format('dddd')} Max: ${weatherData[i].max} Min: ${weatherData[i].min}`,
           "image_url": `https://botsbelaraby-task.herokuapp.com/static/icons/${weatherData[i].icon}.png`,
           "subtitle": `${weatherData[i].subtitle}
-Data For the Day ${moment.unix(weatherData[i].time).format('dddd DD-MM-YYYY')}`,
+Data For the Day ${moment.unix(weatherData[i].time).add( user.timezone, 'hours').format('dddd DD-MM-YYYY')}`,
         })
       }
 
       await mesClient.callSendMessageAPI(sender_psid, response);
 
-    } else if (payload === 'menu') {
+    } else if (payload.action === 'menu') {
 
       let response = {
         "text": `What do you want to change?`,
