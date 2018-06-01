@@ -191,7 +191,7 @@ const start = async () => {
                 "title": `${moment.unix(weatherData[i].time).format('dddd')} Max: ${weatherData[i].max} Min: ${weatherData[i].min}`,
                 "image_url": `https://botsbelaraby-task.herokuapp.com/static/icons/${weatherData[i].icon}.png`,
                 "subtitle": `${weatherData[i].subtitle}
-  Data For the Day ${moment.unix(weatherData[i].time).format('dddd DD-MM-YYYY')}`,
+Data For the Day ${moment.unix(weatherData[i].time).format('dddd DD-MM-YYYY')}`,
               })
             }
   
@@ -260,14 +260,14 @@ const start = async () => {
                 "title": `${moment.unix(weatherData.time).format('dddd')} Temperature: ${weatherData.temperature} Humidity: ${weatherData.humidity}`,
                 "image_url": `https://botsbelaraby-task.herokuapp.com/static/icons/${weatherData.icon}.png`,
                 "subtitle": `${weatherData.subtitle}
-  Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')} at ${moment.unix(weatherData.time).format('hh a')}`,
+Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')} at ${moment.unix(weatherData.time).format('hh a')}`,
               })
             } else {
               response.attachment.payload.elements.push({
                 "title": `${moment.unix(weatherData.time).format('dddd')} Max: ${weatherData.max} Min: ${weatherData.min}`,
                 "image_url": `https://botsbelaraby-task.herokuapp.com/static/icons/${weatherData.icon}.png`,
                 "subtitle": `${weatherData.subtitle}
-  Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')}`,
+Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')}`,
               })
             }
   
@@ -388,14 +388,14 @@ const start = async () => {
                   "title": `${moment.unix(weatherData.time).format('dddd')} Temperature: ${weatherData.temperature} Humidity: ${weatherData.humidity}`,
                   "image_url": `https://botsbelaraby-task.herokuapp.com/static/icons/${weatherData.icon}.png`,
                   "subtitle": `${weatherData.subtitle}
-    Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')} at ${moment.unix(weatherData.time).format('hh a')}`,
+Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')} at ${moment.unix(weatherData.time).format('hh a')}`,
                 })
               } else {
                 response.attachment.payload.elements.push({
                   "title": `${moment.unix(weatherData.time).format('dddd')} Max: ${weatherData.max} Min: ${weatherData.min}`,
                   "image_url": `https://botsbelaraby-task.herokuapp.com/static/icons/${weatherData.icon}.png`,
                   "subtitle": `${weatherData.subtitle}
-    Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')}`,
+Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')}`,
                 })
               }
     
@@ -434,7 +434,7 @@ const start = async () => {
                   "title": `${moment.unix(weatherData[i].time).format('dddd')} Max: ${weatherData[i].max} Min: ${weatherData[i].min}`,
                   "image_url": `https://botsbelaraby-task.herokuapp.com/static/icons/${weatherData[i].icon}.png`,
                   "subtitle": `${weatherData[i].subtitle}
-    Data For the Day ${moment.unix(weatherData[i].time).format('dddd DD-MM-YYYY')}`,
+Data For the Day ${moment.unix(weatherData[i].time).format('dddd DD-MM-YYYY')}`,
                 })
               }
     
@@ -465,8 +465,6 @@ const start = async () => {
       if (received_message.attachments[0].type == "location") {
         const lat = received_message.attachments[0].payload.coordinates.lat;
         const long = received_message.attachments[0].payload.coordinates.long;
-
-        console.log(`qqqqqqqqqqqqqqqqqqqqqqq: ${lat}    ${long}`);
         
         let response = {
           "attachment": {
@@ -558,7 +556,7 @@ const start = async () => {
     } else if (payload.action == 'setLocation') {
 
       const location = JSON.parse(payload.location);
-      
+
       await Users.setLocation(sender_psid, location);
 
       const user = await Users.getUser(sender_psid);
@@ -583,10 +581,10 @@ const start = async () => {
 
 
       response.attachment.payload.elements.push({
-        "title": `${moment.unix(weatherData.time).format('dddd')} Max: ${weatherData.max} Min: ${weatherData.min}`,
+        "title": `${moment.unix(weatherData.time).format('dddd')} Temperature: ${weatherData.temperature} Humidity: ${weatherData.humidity}`,
         "image_url": `https://botsbelaraby-task.herokuapp.com/static/icons/${weatherData.icon}.png`,
         "subtitle": `${weatherData.subtitle}
-Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')}`,
+Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')} at ${moment.unix(weatherData.time).format('hh a')}`,
       })
 
       await mesClient.callSendMessageAPI(sender_psid, response);
