@@ -169,8 +169,9 @@ const start = async () => {
   
             numOfDays = params.numOfDays;
   
-  
-            const weatherData = await weatherClient.getForcast(lat, long, numOfDays);
+            const user = await Users.getUser(sender_psid);
+
+            const weatherData = await weatherClient.getForcast(lat, long, numOfDays, user.unit);
   
             console.log(weatherData);
   
@@ -235,9 +236,10 @@ const start = async () => {
             }
   
             
-            
+            const user = await Users.getUser(sender_psid);
+
             console.log(withTime);
-            const weatherData = await weatherClient.getWeatherInTime(lat, long, time, withTime);
+            const weatherData = await weatherClient.getWeatherInTime(lat, long, time, withTime, user.unit);
   
             console.log(weatherData);
   
@@ -272,6 +274,165 @@ const start = async () => {
             await mesClient.callSendMessageAPI(sender_psid, response);
   
             // await mesClient.sendText(sender_psid, `Weather (Time) For Location lat: ${lat} long: ${long} and Time: ${time} for ${withTime ? `Spacific Time` : `all Day`}`);
+          } else if (result.action && result.action == 'askAboutLocation') {
+            let lat, long;
+  
+            if (params.lat && params.long) {
+              lat = params.lat;
+              long = params.long;
+            } else if (params.city) {
+              const geo = JSON.parse(await rp({
+                "uri": "https://maps.googleapis.com/maps/api/geocode/json",
+                "qs": {
+                  'key': process.env.GEOCODE_KEY,
+                  'address': `${params.city}, ${params.country}`
+                },
+                "method": "GET",
+              }));
+  
+              console.log(geo);
+  
+              lat = geo.results[0].geometry.location.lat;
+              long = geo.results[0].geometry.location.lng;
+            } else {
+              await mesClient.sendText(sender_psid, `Please Enter A place`);
+            }
+
+            let response = {
+              "attachment": {
+                "type": "template",
+                "payload": {
+                  "template_type": "button",
+                  "text": "What Do You Want To Do?",
+                  "buttons": [
+                    {
+                      "type": "postback",
+                      "title": "Set As My Location",
+                      "payload": JSON.stringify({
+                        "action": 'setLocation',
+                        "location": {
+                          "lat": lat,
+                          "long": long
+                        }
+                      }) 
+                    },
+                    {
+                      "type": "postback",
+                      "title": "Check The Weather",
+                      "payload": JSON.stringify({
+                        "action": 'checkWeather',
+                        "location": {
+                          "lat": lat,
+                          "long": long
+                        }
+                      })
+                    }
+                  ]
+                }
+              }
+            } 
+    
+            await mesClient.callSendMessageAPI(sender_psid, response);
+
+          } else if (result.action && result.action == 'getWeatherInTimeNoPlace') {
+            
+            const user = await Users.getUser(sender_psid);
+
+            if (user.location) {
+              let time, withTime = false;
+      
+              if (params.date && params.time) {
+                withTime = true;
+                let temp = params.date.substr(0, params.date.indexOf('T')) + 'T' + params.time.substr(params.time.indexOf('T') + 1);
+    
+                time = moment(temp).unix();
+    
+              } else if (params.date) {
+                time = moment(params.date).unix();
+              } else {
+                time = moment().unix();
+              }
+    
+              
+              
+              console.log(withTime);
+              const weatherData = await weatherClient.getWeatherInTime(user.location.lat, user.location.long, time, withTime, user.unit);
+    
+              console.log(weatherData);
+    
+    
+              let response = {
+                "attachment": {
+                  "type": "template",
+                  "payload": {
+                    "template_type": "generic",
+                    "elements": []
+                  }
+                }
+              }
+    
+    
+              if (withTime) {
+                response.attachment.payload.elements.push({
+                  "title": `${moment.unix(weatherData.time).format('dddd')} Temperature: ${weatherData.temperature} Humidity: ${weatherData.humidity}`,
+                  "image_url": `https://botsbelaraby-task.herokuapp.com/static/icons/${weatherData.icon}.png`,
+                  "subtitle": `${weatherData.subtitle}
+    Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')} at ${moment.unix(weatherData.time).format('hh a')}`,
+                })
+              } else {
+                response.attachment.payload.elements.push({
+                  "title": `${moment.unix(weatherData.time).format('dddd')} Max: ${weatherData.max} Min: ${weatherData.min}`,
+                  "image_url": `https://botsbelaraby-task.herokuapp.com/static/icons/${weatherData.icon}.png`,
+                  "subtitle": `${weatherData.subtitle}
+    Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')}`,
+                })
+              }
+    
+              await mesClient.callSendMessageAPI(sender_psid, response);
+            
+            } else {
+              await mesClient.sendText(sender_psid, 'Please Set a location Firest')
+            }
+            
+  
+          } else if (result.action && result.action == 'getForcastNoPlace') {
+            const user = await Users.getUser(sender_psid);
+            
+            if (user.location) {
+
+
+              const numOfDays = params.numOfDays;
+  
+              const weatherData = await weatherClient.getForcast(user.location.lat, user.location.long, numOfDays, user.unit);
+    
+              console.log(weatherData);
+    
+    
+              let response = {
+                "attachment": {
+                  "type": "template",
+                  "payload": {
+                    "template_type": "generic",
+                    "elements": []
+                  }
+                }
+              }
+    
+              for (let i = 0; i < numOfDays; i++) {
+                response.attachment.payload.elements.push({
+                  "title": `${moment.unix(weatherData[i].time).format('dddd')} Max: ${weatherData[i].max} Min: ${weatherData[i].min}`,
+                  "image_url": `https://botsbelaraby-task.herokuapp.com/static/icons/${weatherData[i].icon}.png`,
+                  "subtitle": `${weatherData[i].subtitle}
+    Data For the Day ${moment.unix(weatherData[i].time).format('dddd DD-MM-YYYY')}`,
+                })
+              }
+    
+              await mesClient.callSendMessageAPI(sender_psid, response);
+            
+            } else {
+              await mesClient.sendText(sender_psid, 'Please Set a location Firest')
+            }
+            
           } else {
             await mesClient.sendText(sender_psid, result.fulfillmentText);
           }
@@ -293,32 +454,54 @@ const start = async () => {
       if (received_message.attachments[0].type == "location") {
         const lat = received_message.attachments[0].payload.coordinates.lat;
         const long = received_message.attachments[0].payload.coordinates.lng;
-        const time = moment().unix();
 
 
-        const weatherData = await weatherClient.getWeatherInTime(lat, long, time, false);
-    
-  
         let response = {
           "attachment": {
             "type": "template",
             "payload": {
-              "template_type": "generic",
-              "elements": []
+              "template_type": "button",
+              "text": "What Do You Want To Do?",
+              "buttons": [
+                {
+                  "type": "postback",
+                  "title": "Set As My Location",
+                  "payload": JSON.stringify({
+                    "action": 'setLocation',
+                    "location": {
+                      "lat": lat,
+                      "long": long
+                    }
+                  }) 
+                },
+                {
+                  "type": "postback",
+                  "title": "Check The Weather",
+                  "payload": JSON.stringify({
+                    "action": 'checkWeather',
+                    "location": {
+                      "lat": lat,
+                      "long": long
+                    }
+                  })
+                },
+                {
+                  "type": "postback",
+                  "title": "Check The Forecast",
+                  "payload": JSON.stringify({
+                    "action": 'checkForecast',
+                    "location": {
+                      "lat": lat,
+                      "long": long
+                    }
+                  })
+                }
+              ]
             }
           }
         }
 
-
-        response.attachment.payload.elements.push({
-          "title": `${moment.unix(weatherData.time).format('dddd')} Max: ${weatherData.max} Min: ${weatherData.min}`,
-          "image_url": `https://botsbelaraby-task.herokuapp.com/static/icons/${weatherData.icon}.png`,
-          "subtitle": `${weatherData.subtitle}
-Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')}`,
-        })
-
         await mesClient.callSendMessageAPI(sender_psid, response);
-        // await mesClient.sendText(sender_psid, `Weather (Time) For Location lat: ${received_message.attachments[0].payload.coordinates.lat} long: ${received_message.attachments[0].payload.coordinates.long} and Time: ${moment().unix()} for all Day`);
       } else {
         // Gets the URL of the message attachment
         let attachment_url = received_message.attachments[0].payload.url;
@@ -339,15 +522,19 @@ Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')}`,
     if (payload.action == 'getstarted') {
   
       var user = await mesClient.getUserInfo(sender_psid);
-  
+
+      await mesClient.sendText(sender_psid, `Welcome ${user.first_name}`);
+      await mesClient.sendText(sender_psid, 'I\'am Weather Bot, And I\'am here To help you');
+
+
+      await mesClient.sendText(sender_psid, `Enter Your Location by:`)
+      await mesClient.sendText(sender_psid, `text`)
+      await mesClient.sendText(sender_psid, `long/latitude`)
+      await mesClient.sendText(sender_psid, `sending location in messenger`)
+      // await mesClient.sendText(sender_psid, `talk to me And I will Understand`)
+      
       let response = {
-        "text": `Welcome ${user.first_name}
-I'am Weather Bot, And I'am here To help you, You can send me:
-  your location by text
-  long/latitude
-  sending location in messenger
-  clicking on the bubble below
-  or just talk to me And I will Understand`,
+        "text": `clicking on the bubble below`,
         "quick_replies": [{
           "content_type": "location"
         }]
@@ -356,16 +543,99 @@ I'am Weather Bot, And I'am here To help you, You can send me:
       await Users.createUser(sender_psid);
   
       await mesClient.callSendMessageAPI(sender_psid, response);
+    } else if (payload.action == 'setLocation') {
+      await Users.setLocation(sender_psid, payload.location);
+
+      await mesClient.sendText(sender_psid, "I Have Set Yor Location");
+
+
+      const weatherData = await weatherClient.getWeatherInTime(payload.location.lat, payload.location.long, moment().unix(), true);
+    
+  
+      let response = {
+        "attachment": {
+          "type": "template",
+          "payload": {
+            "template_type": "generic",
+            "elements": []
+          }
+        }
+      }
+
+
+      response.attachment.payload.elements.push({
+        "title": `${moment.unix(weatherData.time).format('dddd')} Max: ${weatherData.max} Min: ${weatherData.min}`,
+        "image_url": `https://botsbelaraby-task.herokuapp.com/static/icons/${weatherData.icon}.png`,
+        "subtitle": `${weatherData.subtitle}
+Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')}`,
+      })
+
+      await mesClient.callSendMessageAPI(sender_psid, response);
+
+    } else if (payload.action == 'checkWeather') {
+
+      const user = await Users.getUser(sender_psid);
+
+      const weatherData = await weatherClient.getWeatherInTime(payload.location.lat, payload.location.long, moment().unix(), true, user.unit);
+    
+  
+      let response = {
+        "attachment": {
+          "type": "template",
+          "payload": {
+            "template_type": "generic",
+            "elements": []
+          }
+        }
+      }
+
+
+      response.attachment.payload.elements.push({
+        "title": `${moment.unix(weatherData.time).format('dddd')} Max: ${weatherData.max} Min: ${weatherData.min}`,
+        "image_url": `https://botsbelaraby-task.herokuapp.com/static/icons/${weatherData.icon}.png`,
+        "subtitle": `${weatherData.subtitle}
+Data For the Day ${moment.unix(weatherData.time).format('dddd DD-MM-YYYY')}`,
+      })
+
+      await mesClient.callSendMessageAPI(sender_psid, response);
+
+    } else if (payload.action == 'checkForecast') {
+
+      const numOfDays = 7;
+  
+      const user = await Users.getUser(sender_psid);
+
+      const weatherData = await weatherClient.getForcast(payload.location.lat, payload.location.long, numOfDays, user.unit);
+
+      console.log(weatherData);
+
+
+      let response = {
+        "attachment": {
+          "type": "template",
+          "payload": {
+            "template_type": "generic",
+            "elements": []
+          }
+        }
+      }
+
+      for (let i = 0; i < numOfDays; i++) {
+        response.attachment.payload.elements.push({
+          "title": `${moment.unix(weatherData[i].time).format('dddd')} Max: ${weatherData[i].max} Min: ${weatherData[i].min}`,
+          "image_url": `https://botsbelaraby-task.herokuapp.com/static/icons/${weatherData[i].icon}.png`,
+          "subtitle": `${weatherData[i].subtitle}
+Data For the Day ${moment.unix(weatherData[i].time).format('dddd DD-MM-YYYY')}`,
+        })
+      }
+
+      await mesClient.callSendMessageAPI(sender_psid, response);
+
     } else if (payload === 'menu') {
 
       let response = {
         "text": `What do you want to change?`,
         "quick_replies": [
-          {
-            "content_type":"text",
-            "title":"Location",
-            "payload":"changeLocation",
-          },
           {
             "content_type":"text",
             "title":"Unit",
