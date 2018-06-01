@@ -102,7 +102,7 @@ const start = async () => {
 
       let payload = JSON.parse(received_message.quick_reply.payload);
 
-      if (payload == "changeUnit") {
+      if (payload.action == "changeUnit") {
         
         let response = {
           "text": `Choose The Unit`,
@@ -680,7 +680,7 @@ Data For the Day ${moment.unix(weatherData[i].time).add( user.timezone, 'hours')
           {
             "content_type":"text",
             "title":"Unit",
-            "payload":"changeUnit",
+            "payload": "{\"action\":\"changeUnit\"}",
           },
         ]
       }
