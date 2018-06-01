@@ -102,13 +102,35 @@ const start = async () => {
 
       let payload = JSON.parse(received_message.quick_reply.payload);
 
-      if (payload == "changeLocation") {
+      if (payload == "changeUnit") {
+        
+        let response = {
+          "text": `Choose The Unit`,
+          "quick_replies": [
+            {
+              "content_type":"text",
+              "title":"Celsius",
+              "payload": JSON.stringify({
+                "action": "setUnit",
+                "unit": "us",
+              })
+            },
+            {
+              "content_type":"text",
+              "title":"Fahrenheit",
+              "payload": JSON.stringify({
+                "action": "setUnit",
+                "unit": "us"
+              })
+            }
+          ]
+        }
+  
+        await mesClient.callSendMessageAPI(sender_psid, response);
 
-
-      } else if (payload == "changeUnit") {
-
-
-
+      } else if (payload.action == 'setUnit') {
+        await Users.setUnit(sender_psid, payload.unit);
+        await mesClient.sendText(sender_psid, "I Have Set Your Unit");
       }
 
       await mesClient.sendText(sender_psid, `ma3lesh`);
