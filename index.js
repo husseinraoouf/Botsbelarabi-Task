@@ -1,7 +1,12 @@
 'use strict';
 
 const path = require('path');
-process.env['GOOGLE_APPLICATION_CREDENTIALS'] = path.join(`${__dirname}/Botsbelarabi-Task-b4c7a8504300.json`);
+const fs = require('fs');
+
+fs.writeFileSync('key.json', process.env.GOOGEL_KEY);
+
+
+process.env['GOOGLE_APPLICATION_CREDENTIALS'] = path.join(`${__dirname}/key.json`);
 
 // Imports dependencies and set up http server
 const
@@ -135,7 +140,7 @@ const start = async () => {
 
     } else if (received_message.text) {
       // Define session path
-      const sessionPath = sessionClient.sessionPath(process.env.projectId, sender_psid);
+      const sessionPath = sessionClient.sessionPath(process.env.GOOGLE_PROJECT_ID, sender_psid);
   
       // The text query request.
       const request = {
