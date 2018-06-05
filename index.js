@@ -195,13 +195,13 @@ const start = async () => {
       
               console.log(params);
               
-              const {time , withTime} = helper.getTime(params);
+              const timeInfo = helper.getTime(params);
 
-              console.log(`qqqqqqqqqqq ${time}`);
+              console.log(`qqqqqqqqqqq ${timeInfo}`);
               
-              const weatherData = await weatherClient.getWeatherInTime(user.location.lat, user.location.long, time, withTime, user.unit, user.timezone);   
+              const weatherData = await weatherClient.getWeatherInTime(user.location.lat, user.location.long, timeInfo.time, timeInfo.withTime, user.unit, user.timezone);   
     
-              if (withTime) {
+              if (timeInfo.withTime) {
                 await mesClient.sendWeahterTime(sender_psid, weatherData, user.unit);
               } else {
                 await mesClient.sendWeahterDay(sender_psid, weatherData, user.unit);
