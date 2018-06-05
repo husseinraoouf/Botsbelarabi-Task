@@ -195,6 +195,8 @@ const start = async () => {
       
               const {time , withTime} = helper.getTime(params);
 
+              console.log(time);
+              
               const weatherData = await weatherClient.getWeatherInTime(user.location.lat, user.location.long, time, withTime, user.unit, user.timezone);   
     
               if (withTime) {
@@ -226,6 +228,11 @@ const start = async () => {
           }
   
   
+          if (result.intent) {
+            console.log(`  Intent: ${result.intent.displayName}`);
+          } else {
+            console.log(`  No intent matched.`);
+          }
         })
         .catch(err => {
           console.error('ERROR:', err);
