@@ -168,8 +168,12 @@ const start = async () => {
   
             const user = await Users.getUser(sender_psid);
 
+            console.log(params);
+            
             const {lat, long} = helper.getLocation(params);
   
+            console.log(`ggggg ${lat}  ${long}`);
+            
             const {time , withTime} = helper.getTime(params);
 
             const weatherData = await weatherClient.getWeatherInTime(lat, long, time, withTime, user.unit, user.timezone);
@@ -191,12 +195,8 @@ const start = async () => {
             const user = await Users.getUser(sender_psid);
 
             if (user.location) {
-      
-              console.log(params);
-              
+                    
               const {time , withTime} = helper.getTime(params);
-
-              console.log(`qqqqqqqqqqq ${time}`);
               
               const weatherData = await weatherClient.getWeatherInTime(user.location.lat, user.location.long, time, withTime, user.unit, user.timezone);   
     
