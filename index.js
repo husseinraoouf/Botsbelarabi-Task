@@ -193,6 +193,8 @@ const start = async () => {
 
             if (user.location) {
       
+              console.log(params);
+              
               const {time , withTime} = helper.getTime(params);
 
               console.log(`qqqqqqqqqqq ${time}`);
