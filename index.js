@@ -17,7 +17,7 @@ const
   darksky = require('./lib/darksky'),
   weatherClient = darksky(process.env.DARKSKY_KEY),
   connectDB = require('./lib/users'),
-  helper = require('./lib/helpers'),
+  helper = require('./lib/helpers')(),
   moment = require('moment');
 
 
@@ -170,7 +170,7 @@ const start = async () => {
           
             const {lat, long} = await helper.getLocation(params);
               
-            const {time , withTime} = helper.getTime(params);
+            const {time , withTime} = helper.getTime(params, user.timezone);
 
             const weatherData = await weatherClient.getWeatherInTime(lat, long, time, withTime, user.unit, user.timezone);
 
@@ -192,7 +192,7 @@ const start = async () => {
 
             if (user.location) {
                     
-              const {time , withTime} = helper.getTime(params);
+              const {time , withTime} = helper.getTime(params, user.timezone);
               
               const weatherData = await weatherClient.getWeatherInTime(user.location.lat, user.location.long, time, withTime, user.unit, user.timezone);   
     
@@ -216,6 +216,41 @@ const start = async () => {
     
               await mesClient.sendWeahterDay(sender_psid, weatherData, user.unit);
 
+            } else {
+              await mesClient.sendText(sender_psid, 'Please Set a location First')
+            }
+            
+          } else if (result.action && result.action == 'askAboutRain') {
+
+            const user = await Users.getUser(sender_psid);
+          
+            const {lat, long} = await helper.getLocation(params);
+              
+            const {time , withTime} = helper.getTime(params, user.timezone);
+
+            const weatherData = await weatherClient.getWeatherInTime(lat, long, time, withTime, user.unit, user.timezone);
+
+            if (weatherData[0].chanceOfRain > 50) {
+              await mesClient.sendText(sender_psid, `Yes, There is a ${weatherData[0].chanceOfRain} chance it will rain`);
+            } else {
+              await mesClient.sendText(sender_psid, `No, There is a ${weatherData[0].chanceOfRain} chance it will rain`);
+            }
+            
+          } else if (result.action && result.action == 'askAboutRainNoPlace') {
+            
+            const user = await Users.getUser(sender_psid);
+
+            if (user.location) {
+                          
+              const {time , withTime} = helper.getTime(params, user.timezone);
+
+              const weatherData = await weatherClient.getWeatherInTime(user.location.lat, user.location.long, time, withTime, user.unit, user.timezone);
+
+              if (weatherData[0].chanceOfRain > 50) {
+                await mesClient.sendText(sender_psid, `Yes, There is a ${weatherData[0].chanceOfRain} chance it will rain`);
+              } else {
+                await mesClient.sendText(sender_psid, `No, There is a ${weatherData[0].chanceOfRain} chance it will rain`);
+              }
             } else {
               await mesClient.sendText(sender_psid, 'Please Set a location First')
             }
