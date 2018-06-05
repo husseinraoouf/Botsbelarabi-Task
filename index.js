@@ -195,7 +195,7 @@ const start = async () => {
       
               const {time , withTime} = helper.getTime(params);
 
-              console.log(time);
+              console.log(`qqqqqqqqqqq ${time}`);
               
               const weatherData = await weatherClient.getWeatherInTime(user.location.lat, user.location.long, time, withTime, user.unit, user.timezone);   
     
