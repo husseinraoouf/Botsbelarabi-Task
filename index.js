@@ -56,7 +56,7 @@ const start = async () => {
   
   
   // Creates the endpoint for our webhook
-  app.post('/webhook', (req, res) => {
+  app.post('/webhook', async (req, res) => {
   
     // Parse the request body from the POST
     let body = req.body;
@@ -74,14 +74,18 @@ const start = async () => {
         // Get the sender PSID
         let sender_psid = webhook_event.sender.id;
         console.log('Sender PSID: ' + sender_psid);
+
+        await mesClient.typeOn(sender_psid);
   
         // Check if the event is a message or postback and
         // pass the event to the appropriate handler function
         if (webhook_event.message) {
-          handleMessage(sender_psid, webhook_event.message);
+          await handleMessage(sender_psid, webhook_event.message);
         } else if (webhook_event.postback) {
-          handlePostback(sender_psid, webhook_event.postback);
+          await handlePostback(sender_psid, webhook_event.postback);
         }
+
+        await mesClient.typeOff(sender_psid);
       }
   
       // Return a '200 OK' response to all events
