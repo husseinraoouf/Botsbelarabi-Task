@@ -159,7 +159,7 @@ const start = async () => {
             
             const user = await Users.getUser(sender_psid);
 
-            const {lat, long} = helper.getLocation(params);
+            const {lat, long} = await helper.getLocation(params);
   
             const weatherData = await weatherClient.getForcast(lat, long, params.numOfDays, user.unit, user.timezone);
 
@@ -167,13 +167,9 @@ const start = async () => {
           } else if (result.action && result.action == 'getWeatherInTime') {
   
             const user = await Users.getUser(sender_psid);
-
-            console.log(params);
-            
-            const {lat, long} = helper.getLocation(params);
-  
-            console.log(`ggggg ${lat}  ${long}`);
-            
+          
+            const {lat, long} = await helper.getLocation(params);
+              
             const {time , withTime} = helper.getTime(params);
 
             const weatherData = await weatherClient.getWeatherInTime(lat, long, time, withTime, user.unit, user.timezone);
@@ -186,7 +182,7 @@ const start = async () => {
   
           } else if (result.action && result.action == 'askAboutLocation') {
             
-            const location = helper.getLocation(params);
+            const location = await helper.getLocation(params);
 
             mesClient.sendLocationMenu(sender_psid, location);
 
