@@ -10,7 +10,6 @@ const
   express = require('express'),
   bodyParser = require('body-parser'),
   app = express(),
-  rp = require('request-promise-native'),
   dialogflow = require('dialogflow'),
   sessionClient = new dialogflow.SessionsClient(),
   messenger = require('./lib/messenger'),
@@ -195,13 +194,13 @@ const start = async () => {
       
               console.log(params);
               
-              const timeInfo = helper.getTime(params);
+              const {time , withTime} = helper.getTime(params);
 
-              console.log(`qqqqqqqqqqq ${timeInfo}`);
+              console.log(`qqqqqqqqqqq ${time}`);
               
-              const weatherData = await weatherClient.getWeatherInTime(user.location.lat, user.location.long, timeInfo.time, timeInfo.withTime, user.unit, user.timezone);   
+              const weatherData = await weatherClient.getWeatherInTime(user.location.lat, user.location.long, time, withTime, user.unit, user.timezone);   
     
-              if (timeInfo.withTime) {
+              if (withTime) {
                 await mesClient.sendWeahterTime(sender_psid, weatherData, user.unit);
               } else {
                 await mesClient.sendWeahterDay(sender_psid, weatherData, user.unit);
